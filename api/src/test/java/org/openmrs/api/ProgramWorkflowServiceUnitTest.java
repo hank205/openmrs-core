@@ -73,4 +73,61 @@ public class ProgramWorkflowServiceUnitTest {
 		pws.setProgramWorkflowDAO(mockDao);
 		pws.getProgramByName("A name");
 	}
+
+	@Test(expected = org.openmrs.api.APIException.class)
+	@Verifies(value = "should fail when ProgramWorkflowState is null", method = "saveConceptStateConversion()")
+	public void saveConceptStateConversion_shouldFailWhenProgramWorkflowStateIsNull() throws Exception {
+		ProgramWorkflowDAO mockDao = Mockito.mock(ProgramWorkflowDAO.class);
+		pws.setProgramWorkflowDAO(mockDao);
+
+		ConceptStateConversion csc = new ConceptStateConversion();
+		csc.setConcept(new Concept());
+		csc.setProgramWorkflow(new ProgramWorkflow());
+		csc.setProgramWorkflowState(null);
+
+		pws.saveConceptStateConversion(csc);
+	}
+
+	@Test(expected = org.openmrs.api.APIException.class)
+	@Verifies(value = "should fail when ProgramWorkflow is null", method = "saveConceptStateConversion()")
+	public void saveConceptStateConversion_shouldFailWhenProgramWorkflowIsNull() throws Exception {
+		ProgramWorkflowDAO mockDao = Mockito.mock(ProgramWorkflowDAO.class);
+		pws.setProgramWorkflowDAO(mockDao);
+
+		ConceptStateConversion csc = new ConceptStateConversion();
+		csc.setConcept(new Concept());
+		csc.setProgramWorkflow(null);
+		csc.setProgramWorkflowState(new ProgramWorkflowState());
+
+		pws.saveConceptStateConversion(csc);
+	}
+
+	@Test(expected = org.openmrs.api.APIException.class)
+	@Verifies(value = "should fail when Concept is null", method = "saveConceptStateConversion()")
+	public void saveConceptStateConversion_shouldFailWhenConceptIsNull() throws Exception {
+		ProgramWorkflowDAO mockDao = Mockito.mock(ProgramWorkflowDAO.class);
+		pws.setProgramWorkflowDAO(mockDao);
+
+		ConceptStateConversion csc = new ConceptStateConversion();
+		csc.setConcept(null);
+		csc.setProgramWorkflow(new ProgramWorkflow());
+		csc.setProgramWorkflowState(new ProgramWorkflowState());
+
+		pws.saveConceptStateConversion(csc);
+	}
+
+	@Test
+	@Verifies(value = "should call the DAO method saveConceptStateConversion", method = "saveConceptStateConversion()")
+	public void saveConceptStateConversion_shouldCallDaoSaveConceptStateConversion() {
+		ProgramWorkflowDAO mockDao = Mockito.mock(ProgramWorkflowDAO.class);
+		pws.setProgramWorkflowDAO(mockDao);
+
+		ConceptStateConversion csc = new ConceptStateConversion();
+		csc.setConcept(new Concept());
+		csc.setProgramWorkflow(new ProgramWorkflow());
+		csc.setProgramWorkflowState(new ProgramWorkflowState());
+
+		pws.saveConceptStateConversion(csc);
+		Mockito.verify(mockDao).saveConceptStateConversion(csc);
+	}
 }
