@@ -18,6 +18,14 @@ import org.openmrs.api.db.ProgramWorkflowDAO;
 import org.openmrs.api.impl.ProgramWorkflowServiceImpl;
 import org.openmrs.test.Verifies;
 
+import org.junit.Ignore;
+import org.openmrs.ConceptStateConversion;
+import org.openmrs.Concept;
+import org.openmrs.ProgramWorkflow;
+import org.openmrs.ProgramWorkflowState;
+import org.openmrs.Program;
+import org.openmrs.api.context.Context;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -130,4 +138,71 @@ public class ProgramWorkflowServiceUnitTest {
 		pws.saveConceptStateConversion(csc);
 		Mockito.verify(mockDao).saveConceptStateConversion(csc);
 	}
+
+		
+	@Test(expected = org.openmrs.api.APIException.class)
+	@Verifies(value = "saveProgram should fail when program concept is null", method = "saveProgram()")
+	public void saveProgram_shouldFailWhenProgramConceptIsNull() throws Exception{
+
+		ProgramWorkflowDAO mockDao = Mockito.mock(ProgramWorkflowDAO.class);
+		List<Program> programsWithGivenName = new ArrayList<Program>();
+		Program program1 = new Program("A name");
+		programsWithGivenName.add(program1);
+		pws.setProgramWorkflowDAO(mockDao);
+
+		pws.saveProgram(program1);
+	}
+
+
+	@Test
+	@Verifies(value = "saveProgram should pass when program concept is not null and has no ProgramWorkflow", method = "saveProgram()")
+	public void saveProgram_shouldPassWhenProgramConceptIsNotNullAndHasNoProgramWorkflow() {
+
+		ProgramWorkflowDAO mockDao = Mockito.mock(ProgramWorkflowDAO.class);
+		List<Program> programsWithGivenName = new ArrayList<Program>();
+		Program program1 = new Program("A name");
+		programsWithGivenName.add(program1);
+		pws.setProgramWorkflowDAO(mockDao);
+
+		program1.setConcept(new Concept());
+		pws.saveProgram(program1);
+	}
+
+	@Test(expected = org.openmrs.api.APIException.class)
+	@Verifies(value = "saveProgram should fail when program concept is not null and ProgramWorkflow concept is null", method = "saveProgram()")
+	public void saveProgram_shouldFailWhenProgramConceptIsNotNullAndProgramWorkflowConceptIsNull() throws Exception{
+
+		ProgramWorkflowDAO mockDao = Mockito.mock(ProgramWorkflowDAO.class);
+		List<Program> programsWithGivenName = new ArrayList<Program>();
+		Program program1 = new Program("A name");
+		programsWithGivenName.add(program1);
+		pws.setProgramWorkflowDAO(mockDao);
+
+		program1.setConcept(new Concept());
+
+		ProgramWorkflow workflow = new ProgramWorkflow(1);
+		program1.addWorkflow(workflow);
+
+		pws.saveProgram(program1);
+	}
+
+	@Test
+	@Verifies(value = "saveProgram should pass when program concept is not null and ProgramWorkflow concept is not null", method = "saveProgram()")
+	public void saveProgram_shouldFailWhenProgramConceptIsNotNullAndProgramWorkflowConceptIsNotNull() {
+
+		ProgramWorkflowDAO mockDao = Mockito.mock(ProgramWorkflowDAO.class);
+		List<Program> programsWithGivenName = new ArrayList<Program>();
+		Program program1 = new Program("A name");
+		programsWithGivenName.add(program1);
+		pws.setProgramWorkflowDAO(mockDao);
+
+		program1.setConcept(new Concept());
+
+		ProgramWorkflow workflow = new ProgramWorkflow(1);
+		workflow.setConcept(new Concept());
+		program1.addWorkflow(workflow);
+
+		pws.saveProgram(program1);
+	}
+
 }
